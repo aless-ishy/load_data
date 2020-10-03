@@ -1,16 +1,22 @@
-# This is a sample Python script.
+import tensorflow as tf
+from tensorflow.python.keras import Sequential
+from tensorflow.python.keras.layers import Dense, Embedding, Flatten
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+from LoadData import LoadData
 
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    data = LoadData(
+        "data/product_reviews_dataset.csv",
+        32,
+        0,
+        {"path": "model",   "columns": ["Summary"]}
+    )
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    text_model = Sequential([
+        Embedding(input_length=100, input_dim=10000, output_dim=50),
+        Flatten(),
+        Dense(6, activation='relu'),
+        Dense(2, activation='sigmoid')
+    ])
+    text_model.compile(loss="categorical_crossentropy", optimizer="adam", metrics="accuracy")
+    text_model.fit(data.data_set)
